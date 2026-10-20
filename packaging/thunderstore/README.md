@@ -13,6 +13,8 @@
 
 ![The pickup range](https://raw.githubusercontent.com/VRising-Modders/Autoloot/main/docs/images/02-ring.webp)
 
+![Pickup notices with your totals](https://raw.githubusercontent.com/VRising-Modders/Autoloot/main/docs/images/05-notices.webp)
+
 ## For players
 
 Open **Mods** → **Autoloot**:
