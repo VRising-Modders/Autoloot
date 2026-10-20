@@ -6,7 +6,8 @@
 
 ## How it works
 
-- Every drop within your **pickup range** goes into your bags. A short notice tells you what you got.
+- Every drop within your **pickup range** goes into your bags.
+- A notice at the top of the screen lists what you picked up and how many of each you now carry: `Autoloot: Bone +20 (100)` means 20 bones picked up, 100 in your bags. Pickups close together share one line.
 - Turn on **Show my pickup range** to see the range as a ring of flames on the ground around you. The **Help** button on the mod's page shows the same range drawn to scale.
 - Never picked up: items a player dropped, and soul shards.
 
@@ -18,7 +19,7 @@ Open **Mods** → **Autoloot**:
 
 - **Autoloot**: on or off, for you alone.
 - **Pickup filter**: items with the most of each you want in your bags. Set an item to 0 to never pick it up; anything not listed is always picked up while there is room.
-- **Pickup notices**: show or hide the line that lists what you picked up.
+- **Pickup notices**: show or hide the line that lists what you picked up and your new totals.
 - **Show my pickup range**: draw the ring. You can also give it a key in **Mods** → **Keybinds**.
 
 ![Your settings](https://raw.githubusercontent.com/VRising-Modders/Autoloot/main/docs/images/03-settings.webp)
