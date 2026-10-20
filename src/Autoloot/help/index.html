@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Autoloot guide</title>
+<!-- SPDX-License-Identifier: AGPL-3.0-only -->
+<style>
+  :root {
+    --bg: #15100f; --panel: #1f1816; --line: #3a2d29; --text: #e9dfd6; --dim: #a8998e;
+    --accent: #c8323c; --accent-soft: rgba(200, 50, 60, .18); --gold: #d6b26a;
+    --tile: #2a211e; --tile-edge: #3b2e2a; --ok: #7fbf6a; --off: #8a7d74;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f6f1ec; --panel: #ffffff; --line: #e1d6cc; --text: #2a1f1b; --dim: #6e6058;
+      --accent: #b0242f; --accent-soft: rgba(176, 36, 47, .14); --gold: #9a7428;
+      --tile: #efe6dd; --tile-edge: #d9cbbe; --ok: #3f8a2c; --off: #9b8f86;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.55 system-ui, "Segoe UI", sans-serif; }
+  main { max-width: 900px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 30px; margin: 0 0 4px; letter-spacing: .5px; }
+  h2 { font-size: 21px; margin: 40px 0 10px; color: var(--gold); }
+  h3 { font-size: 17px; margin: 22px 0 6px; }
+  p, li { color: var(--text); }
+  .lede { color: var(--dim); margin: 0 0 24px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--dim); font-weight: 600; }
+  code { background: var(--tile); padding: 1px 5px; border-radius: 4px; }
+  .range { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 18px; align-items: start; }
+  @media (max-width: 720px) { .range { grid-template-columns: 1fr; } }
+  svg { width: 100%; height: auto; display: block; }
+  .controls label { display: block; font-weight: 600; margin-bottom: 6px; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  .big { font-size: 40px; font-weight: 700; line-height: 1.1; }
+  .facts { margin: 12px 0 0; padding: 0; list-style: none; }
+  .facts li { padding: 6px 0; border-bottom: 1px solid var(--line); color: var(--dim); }
+  .facts b { color: var(--text); }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .presets button { background: var(--tile); color: var(--text); border: 1px solid var(--line); border-radius: 6px; padding: 4px 10px; cursor: pointer; font: inherit; font-size: 14px; }
+  .presets button[aria-pressed=true] { border-color: var(--accent); background: var(--accent-soft); }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 14px; color: var(--dim); margin-top: 8px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 720px) { .two { grid-template-columns: 1fr; } }
+  .note { color: var(--dim); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Autoloot</h1>
+  <p class="lede">Drops near you go straight into your bags. This guide covers the settings and shows how far the pickup range reaches.</p>
+
+  <h2>How far is the pickup range?</h2>
+  <p><b>In game:</b> turn on <b>Show my pickup range</b> on Autoloot's page (or bind its key). The range is drawn on the ground around your character at the server's real value: a blue-green ghost-flame boundary that follows the terrain and stairs. Admins can press <b>See the range around you</b>, and when the range changes the ring shows for 20 seconds for everyone online.</p>
+  <p>The range is measured horizontally in metres from the player, in every direction. Flames sit on the gameplay floor; buildings hide them, and unloaded terrain leaves gaps. When pickup is off the boundary becomes a quiet grey glow. The drawing below is to scale. Each square is one <b>castle floor tile, 5 m across</b>, the same tile you build with. Drag the slider to the value you set on the server.</p>
+  <div class="card range">
+    <svg id="map" viewBox="-32 -32 64 64" role="img" aria-label="Top-down view of the pickup range around a player"></svg>
+    <div class="controls">
+      <label for="r">Pickup range</label>
+      <div class="big"><span id="rv">10</span> m</div>
+      <input id="r" type="range" min="1" max="30" step="1" value="10" aria-describedby="rfacts">
+      <div class="presets" id="presets"></div>
+      <ul class="facts" id="rfacts"></ul>
+      <div class="legend">
+        <span><span class="dot" style="background:var(--ok)"></span>picked up</span>
+        <span><span class="dot" style="background:var(--off)"></span>left on the ground</span>
+      </div>
+    </div>
+  </div>
+  <p class="note">Height counts too: a drop on a ledge 4 m above you is 4 m further away than the drawing shows. The setting runs from 1 to 30 m; the default is 10 m.</p>
+
+  <h2>Server settings (admins)</h2>
+  <p>Admins change these on Autoloot's page in the Mods menu. Everyone else can see them but not change them.</p>
+  <div class="card">
+    <table>
+      <tr><th>Setting</th><th>What it does</th></tr>
+      <tr><td>Autoloot for players</td><td>On by default. Off: nothing is picked up for anyone.</td></tr>
+      <tr><td>Pickup range</td><td>How far from a player drops are picked up, 1 to 30 m (default 10).</td></tr>
+      <tr><td>What is picked up</td><td><b>Any drop that comes in range</b> (default): a drop is picked up as soon as a player is close enough, even if it had been lying there a while.<br><b>Only drops that land in range</b>: a drop is picked up only by a player who was already in range when it fell. Walking up to an old pile does not take it.</td></tr>
+      <tr><td>Several players in range</td><td><b>Closest player first</b> (default): the nearest player gets the drop.<br><b>Take turns (even)</b>: players in range get drops one after another, so a group shares the loot.</td></tr>
+      <tr><td>Death bags</td><td>What a player carried when they died.<br><b>Never</b>.<br><b>Only the player's own</b> (default): you walk back to your bag and get everything back.<br><b>Anyone the game lets open it</b>: the owner first; otherwise the closest player in range, but only if the game's own death-bag setting lets that player open it (with the game set to only the owner, nobody else ever takes it).<br>A death bag is taken whole: everything that fits, gear with its stats included. Filters and caps do not apply.</td></tr>
+      <tr><td>Dropped inventory bags</td><td>A whole inventory a player dropped on purpose.<br><b>Never</b> (default).<br><b>Anyone except the player who dropped it</b>: handy for handing a friend a full load. Taken whole, like a death bag. The game tells Autoloot who dropped it; a bag it cannot match to its dropper (for example one left from before a restart) is never taken.</td></tr>
+    </table>
+  </div>
+
+  <div class="two" style="margin-top:14px">
+    <div class="card">
+      <h3 style="margin-top:0">Any drop that comes in range</h3>
+      <svg viewBox="0 0 200 110" aria-label="A player walks up to an old pile and picks it up">
+        <circle cx="70" cy="55" r="40" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <circle cx="70" cy="55" r="6" fill="var(--gold)"/>
+        <path d="M30 55 H62" stroke="var(--dim)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a1)"/>
+        <circle cx="96" cy="40" r="5" fill="var(--ok)"/>
+        <text x="110" y="44" font-size="11" fill="var(--text)">old pile: taken</text>
+        <defs><marker id="a1" viewBox="0 0 6 6" refX="5" refY="3" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="var(--dim)"/></marker></defs>
+      </svg>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Only drops that land in range</h3>
+      <svg viewBox="0 0 200 110" aria-label="Only drops that fall while the player is in range are picked up">
+        <circle cx="70" cy="55" r="40" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.5"/>
+        <circle cx="70" cy="55" r="6" fill="var(--gold)"/>
+        <circle cx="92" cy="38" r="5" fill="var(--ok)"/>
+        <text x="110" y="34" font-size="11" fill="var(--text)">fell while near: taken</text>
+        <circle cx="88" cy="76" r="5" fill="var(--off)"/>
+        <text x="110" y="84" font-size="11" fill="var(--text)">was there before: left</text>
+      </svg>
+    </div>
+  </div>
+
+  <h2>Your settings</h2>
+  <div class="card">
+    <table>
+      <tr><th>Setting</th><th>What it does</th></tr>
+      <tr><td>Autoloot</td><td>Your own on/off switch. On by default.</td></tr>
+      <tr><td>Pickup notices</td><td>On by default. Every few seconds while autoloot picks things up, a short banner lists each item, how many were picked up and how many you now have in your bags, for example <i>Copper Ore +20 (140) · Bone +12 (88) · +2 more</i>. An emptied death bag or dropped bag is added as <i>Death bag emptied (37 items)</i>.</td></tr>
+      <tr><td>Pickup filter</td><td>Items you want less of. On Autoloot's page in the Mods menu, press <b>Edit</b> next to Pickup filter and add items with the game's item picker; each line is an item and the most of it you want in your bags, and autoloot stops picking it up at that number. <b>0 means never.</b> Items you have not listed are always picked up while there is room. Up to 200 lines.</td></tr>
+      <tr><td>Respect Satisvampory caps</td><td>Only when Satisvampory runs on the server. Autoloot stops picking up an item once your island holds its cap. Your bags count together with your storage.</td></tr>
+    </table>
+  </div>
+
+  <h2>Without the client part</h2>
+  <p>Autoloot runs on the server, so it also works for a player who has not installed its client part. With Progenitor they still set everything on Autoloot's page in the Mods menu: autoloot on or off, their pickup filter and Satisvampory caps, and they can read the server settings. Only the pickup notices and the range ring need the client part. Admins can turn autoloot off for these players, and choose whether they get a one-line chat message after joining that explains what is going on.</p>
+
+  <h2>With Satisvampory</h2>
+  <p>When Satisvampory runs on the same server, two more things work:</p>
+  <ul>
+    <li><b>Caps.</b> The caps you set in Satisvampory (Cap on the Inventory page, or on a category) also stop autoloot. For example, with a Copper Ore cap of 500 and 480 in storage, you pick up at most 20 more.</li>
+    <li><b>Categories in your filter.</b> Add a category such as Flowers or Materials with a number. That number applies to each item in the category: "Flowers 0" never picks up any flower, and "Flowers 20" stops at 20 of each one. An item line always beats a category line. When two categories hold the same item, the smaller number wins. The item picker offers Satisvampory's built-in categories; which items count as in a category follows your own island's edits.</li>
+  </ul>
+  <p class="note">The caps and categories are your home island's: the ones your own castle uses.</p>
+
+  <h2>Never picked up</h2>
+  <ul>
+    <li>Items a player dropped from their bags.</li>
+    <li>Soul shards. (Gear, jewels and books are picked up, with their stats and durability, just like picking them up by hand.)</li>
+    <li>Anything while you are dead or downed, or when your bags have no room.</li>
+  </ul>
+</main>
+<script>
+(function () {
+  var svg = document.getElementById('map');
+  var input = document.getElementById('r');
+  var out = document.getElementById('rv');
+  var facts = document.getElementById('rfacts');
+  var presetBox = document.getElementById('presets');
+  var NS = 'http://www.w3.org/2000/svg';
+  var HALF = 32, TILE = 5;
+
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    (parent || svg).appendChild(e);
+    return e;
+  }
+
+  // Castle floor tiles: 5 m squares, with the player standing on a tile corner.
+  var grid = el('g', {});
+  for (var x = -30; x < 30; x += TILE)
+    for (var z = -30; z < 30; z += TILE)
+      el('rect', { x: x + 0.15, y: z + 0.15, width: TILE - 0.3, height: TILE - 0.3, rx: 0.4, fill: 'var(--tile)', stroke: 'var(--tile-edge)', 'stroke-width': 0.15 }, grid);
+
+  var area = el('circle', { cx: 0, cy: 0, r: 10, fill: 'var(--accent-soft)', stroke: 'var(--accent)', 'stroke-width': 0.35 });
+  var radiusLine = el('line', { x1: 0, y1: 0, x2: 10, y2: 0, stroke: 'var(--accent)', 'stroke-width': 0.3, 'stroke-dasharray': '1 0.6' });
+  var radiusText = el('text', { x: 5, y: -1, 'font-size': 2.6, 'text-anchor': 'middle', fill: 'var(--text)', 'font-weight': 700 });
+
+  // Fixed drops scattered around: they light up when the range reaches them.
+  var drops = [[3, 4], [-6, 2], [8, -7], [-12, -9], [14, 11], [-4, 17], [19, -3], [-21, 8], [24, 18], [-17, -22], [6, -26], [28, -27]];
+  var dropEls = drops.map(function (d) { return el('circle', { cx: d[0], cy: d[1], r: 0.9 }); });
+
+  // The player: a figure about a metre across.
+  el('circle', { cx: 0, cy: 0, r: 1.1, fill: 'var(--gold)', stroke: 'var(--bg)', 'stroke-width': 0.3 });
+  el('text', { x: 0, y: 3.6, 'font-size': 2.2, 'text-anchor': 'middle', fill: 'var(--text)' }).textContent = 'you';
+
+  // Scale bar: one floor tile.
+  el('rect', { x: -30, y: 28.4, width: TILE, height: 0.8, fill: 'var(--gold)' });
+  el('text', { x: -24, y: 29.4, 'font-size': 2.2, fill: 'var(--text)' }).textContent = '5 m = 1 floor tile';
+
+  function plural(n, word) { return n + ' ' + word + (n === 1 ? '' : 's'); }
+
+  function draw(r) {
+    out.textContent = r;
+    area.setAttribute('r', r);
+    radiusLine.setAttribute('x2', r);
+    radiusText.setAttribute('x', r / 2);
+    radiusText.textContent = r + ' m';
+    var inside = 0;
+    drops.forEach(function (d, i) {
+      var hit = Math.sqrt(d[0] * d[0] + d[1] * d[1]) <= r;
+      if (hit) inside++;
+      dropEls[i].setAttribute('fill', hit ? 'var(--ok)' : 'var(--off)');
+    });
+    var tiles = r / TILE;
+    var tileWords = (tiles % 1 === 0 ? tiles : tiles.toFixed(1)) + ' floor tile' + (tiles === 1 ? '' : 's');
+    facts.innerHTML =
+      '<li><b>' + tileWords + '</b> out from you in every direction</li>' +
+      '<li><b>' + (r * 2) + ' m</b> across the whole circle (' + (r * 2 / TILE % 1 === 0 ? r * 2 / TILE : (r * 2 / TILE).toFixed(1)) + ' tiles)</li>' +
+      '<li>covers about <b>' + Math.round(Math.PI * r * r) + ' m²</b>, ' + plural(Math.round(Math.PI * r * r / (TILE * TILE)), 'tile') + ' of floor</li>' +
+      '<li><b>' + inside + ' of ' + drops.length + '</b> drops in this picture are picked up</li>';
+    Array.prototype.forEach.call(presetBox.children, function (b) { b.setAttribute('aria-pressed', String(Number(b.dataset.r) === r)); });
+  }
+
+  [5, 10, 15, 20, 30].forEach(function (v) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.dataset.r = v;
+    b.textContent = v + ' m';
+    b.addEventListener('click', function () { input.value = v; draw(v); });
+    presetBox.appendChild(b);
+  });
+  input.addEventListener('input', function () { draw(Number(input.value)); });
+  draw(Number(input.value));
+})();
+</script>
+</body>
+</html>

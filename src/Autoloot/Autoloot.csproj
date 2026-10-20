@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The plugin: one DLL for server and client. The engine's sources are compiled in, so the
+       mod ships as a single assembly that Progenitor can hot-reload. -->
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>Autoloot</AssemblyName>
+    <RootNamespace>Autoloot</RootNamespace>
+    <Version>1.0.0</Version>
+    <BepInExPluginGuid>autoloot</BepInExPluginGuid>
+    <BepInExPluginName>Autoloot</BepInExPluginName>
+    <ReferenceGame>true</ReferenceGame>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\Autoloot.Engine\**\*.cs" Exclude="..\Autoloot.Engine\obj\**;..\Autoloot.Engine\bin\**" Link="Engine\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+  <!-- Every build numbers itself: 1.0.N, N = commits (+1 while there are uncommitted changes). A release sets ReleaseVersion. -->
+  <Target Name="AutolootBuildNumber" BeforeTargets="AddGeneratedFile;GetAssemblyVersion;GenerateAssemblyInfo" Condition="'$(ReleaseVersion)' == ''">
+    <Exec Command="git rev-list --count HEAD" ConsoleToMSBuild="true" StandardOutputImportance="low" IgnoreExitCode="true" WorkingDirectory="$(MSBuildProjectDirectory)">
+      <Output TaskParameter="ConsoleOutput" PropertyName="AutolootCommits" />
+    </Exec>
+    <Exec Command="git status --porcelain --untracked-files=no" ConsoleToMSBuild="true" StandardOutputImportance="low" IgnoreExitCode="true" WorkingDirectory="$(MSBuildProjectDirectory)">
+      <Output TaskParameter="ConsoleOutput" PropertyName="AutolootDirty" />
+    </Exec>
+    <PropertyGroup>
+      <AutolootCommits Condition="'$(AutolootCommits)' == '' or !$([System.Text.RegularExpressions.Regex]::IsMatch('$(AutolootCommits)', '^\d+$'))">0</AutolootCommits>
+      <AutolootBuild>$(AutolootCommits)</AutolootBuild>
+      <AutolootBuild Condition="'$(AutolootDirty)' != ''">$([MSBuild]::Add($(AutolootCommits), 1))</AutolootBuild>
+      <Version>1.0.$(AutolootBuild)</Version>
+      <AssemblyVersion>1.0.$(AutolootBuild).0</AssemblyVersion>
+      <FileVersion>1.0.$(AutolootBuild).0</FileVersion>
+      <InformationalVersion>1.0.$(AutolootBuild)</InformationalVersion>
+      <BepInExPluginVersion>1.0.$(AutolootBuild)</BepInExPluginVersion>
+    </PropertyGroup>
+    <Delete Files="$(IntermediateOutputPath)MyPluginInfo.cs" />
+  </Target>
+
+  <PropertyGroup Condition="'$(ReleaseVersion)' != ''">
+    <Version>$(ReleaseVersion)</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Progenitor's Mods page shows this as the mod's About text. -->
+    <EmbeddedResource Include="README.md" LogicalName="Autoloot.README.md" />
+    <!-- The Help button on the mod's page opens this in the browser. -->
+    <EmbeddedResource Include="help\index.html" LogicalName="help/index.html" />
+  </ItemGroup>
+</Project>

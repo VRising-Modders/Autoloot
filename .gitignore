@@ -1,0 +1,7 @@
+bin/
+obj/
+.vs/
+*.user
+TestResults/
+LOCAL.md
+Directory.Build.local.props

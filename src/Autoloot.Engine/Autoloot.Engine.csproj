@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Game-free rules: who may take which drop, and how many. No game, BepInEx or Progenitor
+       reference; the plugin reads the world and feeds these types. -->
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Autoloot.Engine</RootNamespace>
+    <AssemblyName>Autoloot.Engine</AssemblyName>
+  </PropertyGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Autoloot.Engine.Tests" />
+  </ItemGroup>
+</Project>
