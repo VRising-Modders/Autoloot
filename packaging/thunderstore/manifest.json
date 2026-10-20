@@ -4,7 +4,6 @@
   "website_url": "https://github.com/VRising-Modders/Autoloot",
   "description": "Client and server · Requires Progenitor. Drops near you go straight into your bags, with a pickup range ring, a pickup filter and admin rules.",
   "dependencies": [
-    "BepInEx-BepInExPack_V_Rising-1.733.2",
-    "VRising_Modders-Progenitor-2026.10.162"
+    "BepInEx-BepInExPack_V_Rising-1.733.2"
   ]
 }

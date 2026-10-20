@@ -55,6 +55,12 @@ try {
 } finally { $archive.Dispose() }
 Remove-Item -LiteralPath $stage -Recurse -Force
 
-& powershell -NoProfile -ExecutionPolicy Bypass -File $check -Package $zip
-if ($LASTEXITCODE -ne 0) { throw "the package check failed" }
+# Progenitor is not listed on Thunderstore (its listing was rejected), so the manifest cannot depend on
+# VRising_Modders-Progenitor; the README carries the requirement instead. The checker still asks for that
+# dependency, so its deps.progenitor* results are the only failures allowed here.
+$report = (& powershell -NoProfile -ExecutionPolicy Bypass -File $check -Package $zip -Json) -join "`n" | ConvertFrom-Json
+$checks = @($report.results)
+foreach ($c in $checks) { Write-Host ("{0,-5} {1,-26} {2}" -f $c.status, $c.id, $c.message) }
+$failed = @($checks | Where-Object { $_.status -eq "fail" -and $_.id -notlike "deps.progenitor*" })
+if ($failed.Count -gt 0) { throw "the package check failed: $(($failed | ForEach-Object { $_.id }) -join ', ')" }
 Write-Host "wrote $zip"
