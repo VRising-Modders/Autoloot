@@ -54,10 +54,21 @@ Admins change these in the game, on the same page:
 
 **Installing Progenitor** ([step by step](https://vrising-modders.github.io/Progenitor/guide/progenitor-guide.html#players/install)):
 
-- **Installer:** quit the game, open PowerShell and run `irm https://vrising-modders.github.io/Progenitor/install.ps1 | iex`. It finds the game through Steam and installs BepInEx too when it is missing. The script is public; [read it first](https://vrising-modders.github.io/Progenitor/install.ps1).
-- **By hand:** install [BepInExPack V Rising](https://thunderstore.io/c/v-rising/p/BepInEx/BepInExPack_V_Rising/), then download `Progenitor-<version>.zip` from the [latest release](https://github.com/VRising-Modders/Progenitor/releases/latest) and extract it into the folder that holds `VRising.exe`.
+**With the installer.** Quit the game, open **PowerShell** from the Start menu, paste this line and press Enter:
 
-Dedicated server: the same zip works. Extract it into the folder that holds `VRisingServer.exe`. With the installer, add `-Server`: `& ([scriptblock]::Create((irm https://vrising-modders.github.io/Progenitor/install.ps1))) -Server`, or set `$env:PROGENITOR_SERVER=1` before the irm line.
+```powershell
+irm https://vrising-modders.github.io/Progenitor/install.ps1 | iex
+```
+
+It finds the game through Steam and installs BepInEx too when it is missing. The script is public; [read it first](https://vrising-modders.github.io/Progenitor/install.ps1).
+
+For a dedicated server, stop the server and use this line instead:
+
+```powershell
+& ([scriptblock]::Create((irm https://vrising-modders.github.io/Progenitor/install.ps1))) -Server
+```
+
+**By hand.** Install [BepInExPack V Rising](https://thunderstore.io/c/v-rising/p/BepInEx/BepInExPack_V_Rising/), then download `Progenitor-<version>.zip` from the [latest release](https://github.com/VRising-Modders/Progenitor/releases/latest) and extract it into the folder that holds `VRising.exe`. For a dedicated server, extract the same zip into the folder that holds `VRisingServer.exe`.
 
 Then start the game, open **Mods** on the title screen, go to **Install Mods**, search for **Autoloot** and click **Install**. Install it on the server the same way, as an admin, or extract this package's `Autoloot.dll` into the server's `BepInEx/plugins` folder.
 
