@@ -68,9 +68,17 @@ For a dedicated server, stop the server and use this line instead:
 & ([scriptblock]::Create((irm https://vrising-modders.github.io/Progenitor/install.ps1))) -Server
 ```
 
+That line finds a server Steam installed (the V Rising Dedicated Server app). If your server isn't installed through Steam, use this line instead, with the folder that holds `VRisingServer.exe` in the quotes:
+
+```
+& ([scriptblock]::Create((irm https://vrising-modders.github.io/Progenitor/install.ps1))) -Server -GamePath "D:\Servers\VRising"
+```
+
+On a rented server you can't run PowerShell on, use the by-hand steps.
+
 **By hand.** Install [BepInExPack V Rising](https://thunderstore.io/c/v-rising/p/BepInEx/BepInExPack_V_Rising/), then download `Progenitor-<version>.zip` from the [latest release](https://github.com/VRising-Modders/Progenitor/releases/latest) and extract it into the folder that holds `VRising.exe`. For a dedicated server, extract the same zip into the folder that holds `VRisingServer.exe`.
 
-Then start the game, open **Mods** on the title screen, go to **Install Mods**, search for **Autoloot** and click **Install**. Install it on the server the same way, as an admin, or extract this package's `Autoloot.dll` into the server's `BepInEx/plugins` folder.
+Then start the game, open **Mods** on the title screen, go to **Install Mods**, search for **Autoloot** and click **Install**. Install it on the server the same way, as an admin, or copy this package's `Autoloot.dll` into the server's `BepInEx/progenitor-reload` folder.
 
 ## Source and license
 
