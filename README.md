@@ -42,9 +42,9 @@ Admins change these in the game, on the same page:
 
 ![Server settings](https://raw.githubusercontent.com/VRising-Modders/Autoloot/main/docs/images/04-server-settings.webp)
 
-## With Satisvampory
+## With Satisvampory 2.0
 
-On a server that also runs [Satisvampory](https://thunderstore.io/c/v-rising/p/Team_GreenEye/Satisvampory/), autoloot can stop at your island's caps, and your pickup filter can hold Satisvampory categories (such as Flowers or Materials).
+On a server that also runs [Satisvampory 2.0](https://github.com/VRising-Modders/Satisvampory), the castle logistics mod built on Progenitor, autoloot can stop at your island's caps, and your pickup filter can hold Satisvampory categories (such as Flowers or Materials). Satisvampory 1.x does not have this link.
 
 ## Where to install it
 
@@ -54,15 +54,24 @@ On a server that also runs [Satisvampory](https://thunderstore.io/c/v-rising/p/T
 
 ## Requires Progenitor
 
-Autoloot is built on [Progenitor](https://github.com/VRising-Modders/Progenitor), a mod manager and modding framework for V Rising. Install Progenitor first, on the server and on every client:
+Autoloot is built on [Progenitor](https://github.com/VRising-Modders/Progenitor), a mod manager and modding framework for V Rising. Install Progenitor first, on the server and on every client. A mod manager installs it for you along with this package; to install it yourself from GitHub, pick one of these.
 
-1. Install [BepInExPack V Rising](https://thunderstore.io/c/v-rising/p/BepInEx/BepInExPack_V_Rising/) into the folder that holds `VRising.exe` (for a dedicated server, the folder that holds `VRisingServer.exe`).
+**The installer.** Quit the game (or stop the server), open **PowerShell** from the Start menu, paste this line and press Enter:
+
+```powershell
+irm https://vrising-modders.github.io/Progenitor/install.ps1 | iex
+```
+
+It finds V Rising through Steam, installs BepInEx if it's missing, installs the latest Progenitor and tells you what it did. Files it replaces go to `BepInEx\progenitor-backups` first. The script is public; [read it first](https://vrising-modders.github.io/Progenitor/install.ps1). For a dedicated server, or a game in a folder Steam doesn't know, see the options in [Progenitor's README](https://github.com/VRising-Modders/Progenitor#install-players).
+
+**By hand.**
+
+1. Install [BepInExPack V Rising](https://thunderstore.io/c/v-rising/p/BepInEx/BepInExPack_V_Rising/): copy everything inside its `BepInExPack_V_Rising` folder into the folder that holds `VRising.exe` (for a dedicated server, `VRisingServer.exe`), then start the game once.
 2. Quit the game (or stop the server).
-3. Download `Progenitor-<version>.zip` from [Progenitor's GitHub releases](https://github.com/VRising-Modders/Progenitor/releases/latest) and extract it into the same folder. It holds one `BepInEx` folder; let it replace files when you update.
-4. Start the game and open **Mods** on the title screen.
-5. In **Install Mods**, search for **Autoloot** and click **Install**.
+3. From Progenitor's [latest release](https://github.com/VRising-Modders/Progenitor/releases/latest), under **Assets**, download `Progenitor-<version>.zip` (not the `-thunderstore` zip or the source code).
+4. Extract it into the same folder. Its `BepInEx` folder joins the one already there; when Windows asks, replace the files.
 
-Progenitor is also on [Thunderstore](https://thunderstore.io/c/v-rising/p/VRising_Modders/Progenitor/), and a mod manager installs it for you along with this package.
+Then start the game, open **Mods** on the title screen, go to **Install Mods**, search for **Autoloot** and click **Install**.
 
 ## Source and license
 
