@@ -42,10 +42,6 @@ Admins change these in the game, on the same page:
 
 ![Server settings](https://raw.githubusercontent.com/VRising-Modders/Autoloot/main/docs/images/04-server-settings.webp)
 
-## With Satisvampory 2.0
-
-On a server that also runs [Satisvampory 2.0](https://github.com/VRising-Modders/Satisvampory), the castle logistics mod built on Progenitor, autoloot can stop at your island's caps, and your pickup filter can hold Satisvampory categories (such as Flowers or Materials). Satisvampory 1.x does not have this link.
-
 ## Where to install it
 
 - **The server** needs Autoloot: it does the picking up.
