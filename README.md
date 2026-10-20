@@ -56,7 +56,7 @@ Admins change these in the game, on the same page:
 
 **With the installer.** Quit the game, open **PowerShell** from the Start menu, paste this line and press Enter:
 
-```powershell
+```
 irm https://vrising-modders.github.io/Progenitor/install.ps1 | iex
 ```
 
@@ -64,7 +64,7 @@ It finds the game through Steam and installs BepInEx too when it is missing. The
 
 For a dedicated server, stop the server and use this line instead:
 
-```powershell
+```
 & ([scriptblock]::Create((irm https://vrising-modders.github.io/Progenitor/install.ps1))) -Server
 ```
 
